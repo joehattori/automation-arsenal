@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import argparse
 import os
 from dotenv import load_dotenv
@@ -14,6 +16,9 @@ load_dotenv(dotenv_path)
 EMAIL = os.environ.get("EMAIL")
 PASSWORD = os.environ.get("PASSWORD")
 
+def formatted_output(s):
+    print("=== {} ===".format(s))
+
 def click_with_script(driver, element):
     driver.execute_script("arguments[0].click()", element)
 
@@ -29,7 +34,7 @@ def main(subject, file_path, task_name):
     driver.find_element_by_id("passwordInput").send_keys(PASSWORD)
     driver.find_element_by_id("submitButton").click()
 
-    print("=======Successfully logged in=======")
+    formatted_output("Successfully logged in")
 
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "timetable")))
     cells = driver.find_elements_by_class_name("divTableCell")
@@ -41,7 +46,7 @@ def main(subject, file_path, task_name):
                 break
         except NoSuchElementException:
             continue
-    print("=======Selected classes=======")
+    formatted_output("Selected classes")
 
     convert_table = {chr(0xFF10 + i): chr(0x30 + i) for i in range(10)}
 
@@ -55,17 +60,17 @@ def main(subject, file_path, task_name):
                 break
         except NoSuchElementException:
             continue
-    print("=======Selected task=======")
+    formatted_output("Selected task")
 
     submit_area = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "submissionArea")))
     submit_area.find_element_by_class_name("fileSelectInput").send_keys(os.path.abspath(file_path))
     confirm_btn = driver.find_element_by_id("report_submission_btn")
     click_with_script(driver, confirm_btn)
-    print("=======Submitting task=======")
+    formatted_output("Submitting task")
 
     submit_btn = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "submitButton")))
     click_with_script(driver, submit_btn)
-    print("=======Submitted!=======")
+    formatted_output("Submitted!")
 
 if __name__ == "__main__":
     if EMAIL is None or PASSWORD is None:

@@ -23,6 +23,8 @@ const files = dbx.filesDownload({
     fs.writeFile(saveFileName, result.fileBinary, "binary", function(error) {
         if (error) {
             console.error("Error occurred: ", error);
+        } else {
+            console.log(`Successfully downloaded to ${saveFileName}`);
         }
     });
 }, console.error);
