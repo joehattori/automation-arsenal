@@ -9,12 +9,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-load_dotenv(verbose=True)
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
-EMAIL = os.environ.get("EMAIL")
-PASSWORD = os.environ.get("PASSWORD")
+EMAIL = os.environ.get("LMS_EMAIL")
+PASSWORD = os.environ.get("LMS_PASSWORD")
 
 def formatted_output(s):
     print("=== {} ===".format(s))
@@ -73,8 +72,11 @@ def main(subject, file_path, task_name):
     formatted_output("Submitted!")
 
 if __name__ == "__main__":
+    if not os.path.isfile(".env"):
+        print(".envファイルを作成し、.env.sampleを参考に自分のLMSのメールアドレスとパスワードを入力して下さい。")
+        exit()
     if EMAIL is None or PASSWORD is None:
-        print(".envファイルを作成し、.env.sampleを参考にあなたのEMAILとPASSWORDを設定してください。")
+        print(".env.sampleを参考にあなたのLMSのメールアドレスとパスワードを.envに入力してください。")
         exit()
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--subject", help="subject ex) 統計と最適化")
