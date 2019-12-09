@@ -18,6 +18,9 @@ NAME        = os.environ.get("NAME") # 自分の氏名
 FACULTY     = os.environ.get("FACULTY")
 STUDENT_ID  = os.environ.get("STUDENT_ID") # 自分の学籍番号
 
+def formatted_output(s):
+    print("== {} ==".format(s))
+
 def message(file, num):
     msg = MIMEMultipart()
     msg["Subject"] = " ".join([str(num), FACULTY, STUDENT_ID, NAME])
@@ -33,23 +36,26 @@ def message(file, num):
     return msg
 
 def send_gmail(file, num):
+    formatted_output("Attaching file")
     msg = message(file, num)
-    s = smtplib.SMTP("smtp.gmail.com", 587) 
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    s.login(MY_ADDRESS, MY_PASSWORD)
-    s.sendmail(MY_ADDRESS, TA_ADDRESS, msg.as_string())
+    formatted_output("Connecting to Gmail server")
+    with smtplib.SMTP("smtp.gmail.com", 587) as s:
+        s.starttls()
+        s.ehlo()
+        formatted_output("Logging in to Google account")
+        s.login(MY_ADDRESS, MY_PASSWORD)
+        formatted_output("Sending")
+        s.sendmail(MY_ADDRESS, TA_ADDRESS, msg.as_string())
+    formatted_output("Done")
 
-def is_ready():
-    to_check = [MY_ADDRESS, MY_PASSWORD, TA_ADDRESS, FACULTY, NAME, STUDENT_ID]
-    return all(c != "" for c in to_check)
+def is_not_ready():
+    return any(not c for c in [MY_ADDRESS, MY_PASSWORD, TA_ADDRESS, FACULTY, NAME, STUDENT_ID])
 
 if __name__ == "__main__":
     if not os.path.isfile(".env"):
         print(".envファイルを作成し、.env.sampleを参考に自分のgmailアドレスとパスワード、宛先のアドレス、学科、氏名、学籍番号を全て入力してください。")
         exit()
-    if not is_ready():
+    if is_not_ready():
         print(".env.sampleを参考に.envファイルに自分のgmailアドレスとパスワード、宛先のアドレス、学科、氏名、学籍番号を全て入力してください。")
         exit()
     parser = argparse.ArgumentParser()
