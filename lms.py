@@ -67,7 +67,7 @@ def main(subject, file_path, task_name):
     click_with_script(driver, confirm_btn)
     formatted_output("Submitting task")
 
-    submit_btn = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "submitButton")))
+    submit_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitButton")))
     click_with_script(driver, submit_btn)
     formatted_output("Submitted!")
 
